@@ -62,12 +62,12 @@ You get an additional parameter in the handler function eg:
 
 # Why is $page.js special?
 
-[x] $page.js doesn't pollute the global scope
-[x] $page.js weighs less than 1.5kB *in total*
-[x] $page.js passes url parameters to getters
-[x] $page.js is optimized for speed
-[x] $page.js is easy to drop into existing libraries like React
-[x] in the end, $page.js is just a simple function
+- [x] $page.js doesn't pollute the global scope
+- [x] $page.js weighs less than 1.5kB *in total*
+- [x] $page.js passes url parameters to getters
+- [x] $page.js is optimized for speed
+- [x] $page.js is easy to drop into existing libraries like React
+- [x] in the end, $page.js is just a simple function
 
 # How can I use it?
 Check the given example in src/demo.js and index.html. You can use $page.js by including it before the body ends or in the head section of your page.
