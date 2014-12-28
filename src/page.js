@@ -26,32 +26,9 @@
 window.$page = function(page, options){
 	'use strict';
 
-	/**
-	 * Default options for $page.js
-	 * possible options are:
-	 * 		html5: whether or not to use HTML5
-	 * 		prefix: the prefix of url constructs
-	 * 				if you want classic AJAX urls:
-	 * 				you can set prefix to `#!`
-	 * @type {Object}
-	 *
-	var defaultOptions = {
-		'html5': true,
-		'prefix': ''
-	};
 
-	/*==========  Preparing...  ==========*
-	var noop = function(){};
-	var console = (window.console || {
-		log: noop, error: noop, warning: noop, info: noop
-	});
-
-	if (!('keys' in Object)){
-		console.error("Object.keys not supported. Add polyfill or include underscore.js");
-	}
-	*/
-
-
+	var currentRoute = "";
+	var has404route = false;
 	/*=============================================
 	=            MiniURL specification            =
 	=============================================*/
@@ -168,14 +145,16 @@ window.$page = function(page, options){
 	
 	// TODO: implement me. :)
 	if (typeof options !== "undefined" && typeof options.templateEngine !== "undefined"){
-
-	} else { // use default template engine
-
-	}	
+		templateEngine = options.templateEngine;
+	}
 	/*-----  End of Configuring templates  ------*/
 	
 	
 	var pageHandler = function pageHandler(path, back){
+		currentRoute = path;
+
+		var routed = false;
+
 		if (typeof back === "undefined"){ back = false; }
 
 		for (var j = 0, len = parsedFragments.length; j < len; j++){
@@ -196,10 +175,22 @@ window.$page = function(page, options){
 					console.error("No handler defined for route: " + parsedFragment.route);
 					break;
 				}
-
-				parsedFragment.data.handler.bind(this)(params, parsedFragment, back);
+				routed = true;
+				parsedFragment.data.handler.bind(this)(params, $pageRouter, back);
 				break;
 			}
+		}
+
+		/*==========  404 route  ==========*/
+		if (!routed && has404route){
+			$pageRouter.route($pageRouter.get404Route());
+		}
+	};
+
+	var $pageRouter = {
+		route: pageHandler,
+		currentRoute: function(){
+			return currentRoute;
 		}
 	};
 
@@ -286,8 +277,7 @@ window.$page = function(page, options){
 	
 	
 	/*-----  End of Event Listeners  ------*/
-	
-	var $pageRouter = pageHandler;
+
 	return $pageRouter;
 	
 };
