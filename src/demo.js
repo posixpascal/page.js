@@ -4,6 +4,7 @@ window.onload = function(){
 		'/': {
 			handler: function(params, router){
 				console.log("got it.");
+				router.route('/my/test');
 			},
 			template: function(params, router){
 				var t = $template('main.html', params);
@@ -11,7 +12,7 @@ window.onload = function(){
 		},
 		'/my/{:stuff}': {
 			handler: function(params, router){
-				alert(params.stuff);
+				console.log(router.currentRoute());
 			}
 		},
 		'$notFound': {

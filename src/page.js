@@ -101,6 +101,11 @@ window.$page = function(page, options){
 	var urlFragmentsLength = urlFragments.length;
 	for (var i = 0; i < urlFragmentsLength; i++){
 		var urlFragment = urlFragments[i];
+		if (urlFragment === '$notFound'){
+			has404route = true;
+			continue;
+		}
+
 		var matcher = miniURL(urlFragment);
 
 		var parsedFragment = {
@@ -191,6 +196,11 @@ window.$page = function(page, options){
 		route: pageHandler,
 		currentRoute: function(){
 			return currentRoute;
+		},
+		get404Route: function(){
+			if (has404route){
+				return 
+			}
 		}
 	};
 
