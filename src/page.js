@@ -149,9 +149,13 @@ window.$page = function(page, options){
 	**/
 	
 	// TODO: implement me. :)
+	var templateRoot = "";
+	var templateEngine = "";
 	if (typeof options !== "undefined" && typeof options.templateEngine !== "undefined"){
 		templateEngine = options.templateEngine;
+		templateRoot = options.templateRoot || "#page-templates";
 	}
+
 	/*-----  End of Configuring templates  ------*/
 	
 	
@@ -182,13 +186,24 @@ window.$page = function(page, options){
 				}
 				routed = true;
 				parsedFragment.data.handler.bind(this)(params, $pageRouter, back);
+
+				/*==========  Handle templates  ==========*/
+
+				if (typeof parsedFragment.data.template !== "undefined"){
+					var templateRootElem = document.getElementById(templateRoot);
+					var templateSource = templateEngine(parsedFragment.data.template, params);
+					templateRootElem.innerHTML = templateSource;
+				}
+
+				/*==========  End handle templates  ==========*/
+				
 				break;
 			}
 		}
 
 		/*==========  404 route  ==========*/
 		if (!routed && has404route){
-			$pageRouter.route($pageRouter.get404Route());
+			page[$pageRouter.get404Route()].handler.bind(this)({}, $pageRouter, back);
 		}
 	};
 
@@ -199,7 +214,7 @@ window.$page = function(page, options){
 		},
 		get404Route: function(){
 			if (has404route){
-				return 
+				return '$notFound';
 			}
 		}
 	};
@@ -226,7 +241,8 @@ window.$page = function(page, options){
 	/*-----  End of Helper functions  ------*/
 	
 	
-
+	
+	var prevActive = null;
 	
 	/*==============================================
 	=            Adding click listeners            =
@@ -246,7 +262,11 @@ window.$page = function(page, options){
 				} else {
 					href = e.target.dataset.href;
 				}
-
+				if (prevActive != null){
+					prevActive.classList.remove("active");
+				}
+				prevActive = e.target;
+				e.target.classList.add("active");
 				pageTo(href);
 
 				e.preventDefault();
