@@ -181,22 +181,40 @@ window.$page = function(page, options){
 
 				// call handler:
 				if (typeof parsedFragment.data.handler === "undefined"){
-					console.error("No handler defined for route: " + parsedFragment.route);
+					console && console.error("No handler defined for route: " + parsedFragment.route);
 					break;
 				}
 				routed = true;
-				parsedFragment.data.handler.bind(this)(params, $pageRouter, back);
 
-				/*==========  Handle templates  ==========*/
+				var next = function(params, $pageRouter){
+					parsedFragment.data.handler.bind(this)(params, $pageRouter, back);
 
-				if (typeof parsedFragment.data.template !== "undefined"){
-					var templateRootElem = document.getElementById(templateRoot);
-					var templateSource = templateEngine(parsedFragment.data.template, params);
-					templateRootElem.innerHTML = templateSource;
+					/*==========  Handle templates  ==========*/
+
+					if (typeof parsedFragment.data.template !== "undefined"){
+						var templateRootElem = document.getElementById(templateRoot);
+						var templateSource = templateEngine(parsedFragment.data.template, params);
+						templateRootElem.innerHTML = templateSource;
+					}
+
+					/*==========  End handle templates  ==========*/
+
+					if (typeof parsedFragment.data.afterRoute !== "undefined"){
+						parsedFragment.data.afterRoute.bind(this)();
+					}
+					
+				};
+
+				if (typeof parsedFragment.data.beforeRoute !== "undefined"){
+					parsedFragment.data.beforeRoute.bind(this)(params, $pageRouter, next);
+				} else {
+					next(params, $pageRouter, back);
 				}
 
-				/*==========  End handle templates  ==========*/
+
+
 				
+			
 				break;
 			}
 		}
@@ -262,7 +280,7 @@ window.$page = function(page, options){
 				} else {
 					href = e.target.dataset.href;
 				}
-				if (prevActive != null){
+				if (prevActive !== null){
 					prevActive.classList.remove("active");
 				}
 				prevActive = e.target;

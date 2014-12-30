@@ -7,7 +7,7 @@ window.$template = function(template, params, options){
 		templatePath = options.templatePath;
 	}
 
-	// TODO: implement a tinyXHR library as well.
+	// TODO: implement a tinyXHR library as well. ;D
 	var $xhrSync = function(){}; 
 
 
@@ -40,7 +40,7 @@ window.$template = function(template, params, options){
 				result = params[currentVar.replace(/\{:\w?params.(.+)\}/, '$1')];
 			} else {
 				// evaluate regular javascript expression
-				result = (Function(currentVar.replace(/\{:(.+)\}/, '$1')))();
+				result = (eval(currentVar.replace(/\{:(.+)\}/, '$1')));
 			}
 
 			templateSource = templateSource.replace(currentVar, result);
