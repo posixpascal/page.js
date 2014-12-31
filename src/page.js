@@ -177,21 +177,29 @@ window.$page = function(page, options){
 					// this is a bit ugly at the moment.
 					params[matcher.map[k]] = RegExp["$" + (k + 1)];
 				}
-
+				var handler;
+				var isFunctionOnly = false;;
+				console.log(parsedFragment);
+				if (typeof parsedFragment.data === "function"){
+					handler = parsedFragment.data;
+					isFunctionOnly = true;
+				} else { 
+					handler = parsedFragment.data.handler; 
+				}
 
 				// call handler:
-				if (typeof parsedFragment.data.handler === "undefined"){
+				if (typeof handler === "undefined"){
 					console && console.error("No handler defined for route: " + parsedFragment.route);
 					break;
 				}
 				routed = true;
 
 				var next = function(params, $pageRouter){
-					parsedFragment.data.handler.bind(this)(params, $pageRouter, back);
+					handler.bind(this)(params, $pageRouter, back);
 
 					/*==========  Handle templates  ==========*/
 
-					if (typeof parsedFragment.data.template !== "undefined"){
+					if (!isFunctionOnly && typeof parsedFragment.data.template !== "undefined"){
 						var templateRootElem = document.getElementById(templateRoot);
 						var templateSource = templateEngine(parsedFragment.data.template, params);
 						templateRootElem.innerHTML = templateSource;
@@ -199,13 +207,13 @@ window.$page = function(page, options){
 
 					/*==========  End handle templates  ==========*/
 
-					if (typeof parsedFragment.data.afterRoute !== "undefined"){
+					if (!isFunctionOnly && typeof parsedFragment.data.afterRoute !== "undefined"){
 						parsedFragment.data.afterRoute.bind(this)();
 					}
 					
 				};
 
-				if (typeof parsedFragment.data.beforeRoute !== "undefined"){
+				if (!isFunctionOnly && typeof parsedFragment.data.beforeRoute !== "undefined"){
 					parsedFragment.data.beforeRoute.bind(this)(params, $pageRouter, next);
 				} else {
 					next(params, $pageRouter, back);
@@ -234,6 +242,9 @@ window.$page = function(page, options){
 			if (has404route){
 				return '$notFound';
 			}
+		},
+		getRoutes: function(){
+			return parsedFragments;
 		}
 	};
 

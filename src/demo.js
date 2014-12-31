@@ -56,18 +56,20 @@ window.onload = function(){
 			},
 			template: 'my.html'
 		},
+		"/test": function(params, router){
+			console.log("Test route.");
+		},
 		'$notFound': {
 			handler: function(params, router){
 
 			}
-		}
+		},
+
 	}, {
 		'hijackLinks': true,
 		'templateRoot': 'page-templates',
 		'templateEngine': window.$template
 	});
-
-	window.router.route('/thisShouldBe404');
 
 	var span = $(".time");
 	setInterval(function(){
